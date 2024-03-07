@@ -20,13 +20,12 @@ const SentMessage = ({ message }) => {
     const DOUBLE_PRESS_DELAY = 300; // Adjust as needed
     if (lastTapRef.current && now - lastTapRef.current < DOUBLE_PRESS_DELAY) {
       console.log("Double tapped! ", messageData);
-      // Perform your double tap action here
 
       try {
         // Update the message in Firestore
-        const messageRef = doc(db, "messages", message.id); // Assuming 'id' is the unique identifier of the message document
+        const messageRef = doc(db, "messages", message.id);
         await updateDoc(messageRef, {
-          heart: !messageData.heart, // Toggle the 'heart' boolean
+          heart: !messageData.heart,
         });
       } catch (error) {
         console.error("Error updating message: ", error);
