@@ -1,6 +1,6 @@
 // App.js
 import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, StrictMode } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { auth, db } from "./firebase";
