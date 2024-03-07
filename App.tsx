@@ -14,6 +14,7 @@ import useThemeStore from "./store/ThemeStore";
 import { auth, db } from "./firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, collection, getDocs, onSnapshot } from "firebase/firestore";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 // Import icons
 import { Ionicons } from "@expo/vector-icons";
@@ -74,58 +75,60 @@ export default function App() {
   const LogOutButton = () => <Button title="Logout" onPress={signOut(auth)} />;
 
   return (
-    <PaperProvider theme={theme}>
-      <NavigationContainer>
-        <Tab.Navigator
-          screenOptions={({ route }) => ({
-            tabBarIcon: ({ focused, color, size }) => {
-              let iconName;
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <PaperProvider theme={theme}>
+        <NavigationContainer>
+          <Tab.Navigator
+            screenOptions={({ route }) => ({
+              tabBarIcon: ({ focused, color, size }) => {
+                let iconName;
 
-              if (route.name === "Home") {
-                iconName = focused ? "home" : "home-outline";
-              } else if (route.name === "Chat") {
-                iconName = focused ? "chatbubble" : "chatbubble-outline";
-              } else if (route.name === "Signup") {
-                iconName = focused ? "person" : "person-outline";
-              } else if (route.name === "Logout") {
-                iconName = focused ? "log-out" : "log-out-outline";
-              }
+                if (route.name === "Home") {
+                  iconName = focused ? "home" : "home-outline";
+                } else if (route.name === "Chat") {
+                  iconName = focused ? "chatbubble" : "chatbubble-outline";
+                } else if (route.name === "Signup") {
+                  iconName = focused ? "person" : "person-outline";
+                } else if (route.name === "Logout") {
+                  iconName = focused ? "log-out" : "log-out-outline";
+                }
 
-              // You can return any component that you like here!
-              return <Ionicons name={iconName} size={size} color={color} />;
-            },
-          })}
-        >
-          {user ? (
-            <>
-              <Tab.Screen
-                name="Home"
-                component={HomeScreen}
-                options={{ headerShown: false }}
-              />
-              {isDisplayChat ? (
-                <Tab.Screen name="Chat" component={MessengerScreen} />
-              ) : (
-                <></>
-              )}
-              <Tab.Screen name="Logout" component={LogOutButton} />
-            </>
-          ) : (
-            <>
-              <Tab.Screen
-                name="Home"
-                component={HomeScreen}
-                options={{ headerShown: false }}
-              />
-              <Tab.Screen
-                name="Signup"
-                component={SignUpScreen}
-                options={{ headerShown: false }}
-              />
-            </>
-          )}
-        </Tab.Navigator>
-      </NavigationContainer>
-    </PaperProvider>
+                // You can return any component that you like here!
+                return <Ionicons name={iconName} size={size} color={color} />;
+              },
+            })}
+          >
+            {user ? (
+              <>
+                <Tab.Screen
+                  name="Home"
+                  component={HomeScreen}
+                  options={{ headerShown: false }}
+                />
+                {isDisplayChat ? (
+                  <Tab.Screen name="Chat" component={MessengerScreen} />
+                ) : (
+                  <></>
+                )}
+                <Tab.Screen name="Logout" component={LogOutButton} />
+              </>
+            ) : (
+              <>
+                <Tab.Screen
+                  name="Home"
+                  component={HomeScreen}
+                  options={{ headerShown: false }}
+                />
+                <Tab.Screen
+                  name="Signup"
+                  component={SignUpScreen}
+                  options={{ headerShown: false }}
+                />
+              </>
+            )}
+          </Tab.Navigator>
+        </NavigationContainer>
+      </PaperProvider>
+    </GestureHandlerRootView>
   );
 }
