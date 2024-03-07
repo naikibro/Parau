@@ -34,6 +34,13 @@ const MessageInput = (receiver) => {
   // Send the message
   const handleSubmit = async () => {
     console.log(user);
+
+    // Check if the message is not empty
+    if (!message.trim()) {
+      // If message is empty or contains only whitespace, do not send
+      return;
+    }
+
     setMessage("");
     try {
       await addDoc(collection(db, "messages"), {
@@ -63,12 +70,13 @@ const MessageInput = (receiver) => {
       <TextInput
         editable
         multiline
-        mode="outlined"
+        mode="flat"
         value={message}
         onChangeText={(value) => setMessage(value)}
-        label="Type a message..."
+        textColor="black"
         style={{
-          backgroundColor: "white",
+          color: "black",
+          verticalAlign: "bottom",
           height: 40,
           width: "75%",
           alignSelf: "center",
