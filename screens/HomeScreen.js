@@ -21,12 +21,10 @@ import useHeaderStore from "../store/HeaderStore";
 
 const ContactCard = ({ navigation, contact }) => {
   const initials = contact.name.substring(0, 2);
-  const isChatting = useHeaderStore((state) => state.isChatting);
-  const toggle = useHeaderStore((state) => state.toggleChat);
+  const activateChat = useHeaderStore((state) => state.activateChat);
 
-  const handlePress = () => {
-    toggle();
-
+  const handlePress = async () => {
+    await activateChat();
     navigation.navigate("Chat", { contact: { contact } });
   };
 
@@ -80,8 +78,6 @@ const HomeScreen = ({ navigation }) => {
 
     return () => unsubscribe(); // Unsubscribe from snapshot listener when component unmounts
   }, []);
-
-  /* console.log(users); */
 
   {
     isChatting ?? toggle();
