@@ -47,6 +47,7 @@ const MessageInput = (receiver) => {
         text: message,
         sender: user.uid,
         receiver: receiver.receiver,
+        heart: false,
         timestamp: new Date(),
       });
     } catch (error) {
