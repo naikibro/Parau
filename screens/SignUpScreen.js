@@ -131,7 +131,7 @@ const SignUpScreen = ({ navigation }) => {
       <KeyboardAvoidingView style={styles.container}>
         <View style={styles.container}>
           <ImageBackground
-            source={require("../assets/stars.jpg")}
+            source={require("../assets/bg-parau.png")}
             resizeMode="cover"
             style={styles.backgroundImage}
           />
