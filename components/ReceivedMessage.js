@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, TouchableWithoutFeedback, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { doc, updateDoc, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase";
+import { GestureDetector, Gesture } from "react-native-gesture-handler";
 
 const ReceivedMessage = ({ message }) => {
   const [messageData, setMessageData] = useState(message);
-  const lastTapRef = useRef(null);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(doc(db, "messages", message.id), (doc) => {
@@ -15,37 +15,41 @@ const ReceivedMessage = ({ message }) => {
     return () => unsubscribe();
   }, [message.id]);
 
-  const handlePress = async () => {
-    const now = Date.now();
-    const DOUBLE_PRESS_DELAY = 300; // Adjust as needed
-    if (lastTapRef.current && now - lastTapRef.current < DOUBLE_PRESS_DELAY) {
-      console.log("Double tapped! ", messageData);
-      try {
-        const messageRef = doc(db, "messages", message.id);
-        await updateDoc(messageRef, {
-          heart: !messageData.heart,
-        });
-      } catch (error) {
-        console.error("Error updating message: ", error);
-      }
+  const handleDoubleTap = async () => {
+    console.log("Double tapped! ", messageData);
+    try {
+      const messageRef = doc(db, "messages", message.id);
+      await updateDoc(messageRef, {
+        heart: !messageData.heart,
+      });
+    } catch (error) {
+      console.error("Error updating message: ", error);
     }
-    lastTapRef.current = now;
   };
 
+  // Define the double tap gesture using RNGH
+  const doubleTapGesture = Gesture.Tap()
+    .numberOfTaps(2)
+    .onEnd(() => {
+      handleDoubleTap();
+    });
+
   return (
-    <TouchableWithoutFeedback onPress={handlePress}>
-      <View style={styles.container}>
-        <Text style={styles.text}>{messageData.text}</Text>
-        {messageData.heart && (
-          <Icon
-            name="heart"
-            size={20}
-            color="pink"
-            style={{ position: "absolute", bottom: -8, right: -8 }}
-          />
-        )}
-      </View>
-    </TouchableWithoutFeedback>
+    <GestureDetector gesture={doubleTapGesture}>
+      <TouchableOpacity>
+        <View style={styles.container}>
+          <Text style={styles.text}>{messageData.text}</Text>
+          {messageData.heart && (
+            <Icon
+              name="heart"
+              size={20}
+              color="pink"
+              style={{ position: "absolute", bottom: -8, right: -8 }}
+            />
+          )}
+        </View>
+      </TouchableOpacity>
+    </GestureDetector>
   );
 };
 

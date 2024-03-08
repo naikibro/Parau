@@ -8,26 +8,44 @@ import {
   Dimensions,
   SafeAreaView,
 } from "react-native";
-import { Avatar, Button } from "react-native-paper";
-import LoginForm from "../components/LoginForm";
+import { Avatar } from "react-native-paper";
+
+// Import Gesture Handling
+import {
+  FlingGestureHandler,
+  Directions,
+  State,
+  ScrollView,
+} from "react-native-gesture-handler";
+
+// Import firebase SDK
 import { useEffect, useState } from "react";
 import { auth } from "../firebase";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { collection, getDocs, onSnapshot } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
+import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase";
+
+// Import assets
 import starsBackground from "../assets/stars.jpg";
 
+// Import components
+import LoginForm from "../components/LoginForm";
+
+// Import stores
 import useHeaderStore from "../store/HeaderStore";
 
 const ContactCard = ({ navigation, contact }) => {
   const initials = contact.name.substring(0, 2);
-  const isChatting = useHeaderStore((state) => state.isChatting);
-  const toggle = useHeaderStore((state) => state.toggleChat);
+  const activateChat = useHeaderStore((state) => state.activateChat);
+  const setLastContact = useHeaderStore((state) => state.setLastContact);
+  const lastContact = useHeaderStore((state) => state.lastContact);
 
-  const handlePress = () => {
-    toggle();
-
-    navigation.navigate("Chat", { contact: { contact } });
+  const handlePress = async () => {
+    console.log("contact: ", contact);
+    setLastContact(contact);
+    console.log("lastContact: ", lastContact);
+    await activateChat();
+    navigation.navigate("Chat");
   };
 
   return (
@@ -58,7 +76,7 @@ const HomeScreen = ({ navigation }) => {
   const [user, setUser] = useState(null);
   const [users, setUsers] = useState([]);
   const isChatting = useHeaderStore((state) => state.isChatting);
-  const toggle = useHeaderStore((state) => state.toggleChat);
+  const lastContact = useHeaderStore((state) => state.lastContact);
 
   // Authentication state listener
   useEffect(() => {
@@ -81,50 +99,68 @@ const HomeScreen = ({ navigation }) => {
     return () => unsubscribe(); // Unsubscribe from snapshot listener when component unmounts
   }, []);
 
-  /* console.log(users); */
+  const onSwipeLeft = () => {
+    console.log("swipped left");
+    console.log(lastContact);
+    if (isChatting) {
+      if (lastContact !== undefined) {
+        navigation.navigate("Chat");
+      } else {
+        console.log("Contact undefined");
+      }
+    } else {
+      console.log("Select a contact to discuss first");
+    }
+  };
 
-  {
-    isChatting ?? toggle();
-  }
   return (
-    <View style={[styles.container]}>
-      <SafeAreaView style={[styles.container]}>
-        <ImageBackground
-          source={starsBackground}
-          style={styles.backgroundImage}
-        />
+    <FlingGestureHandler
+      direction={Directions.LEFT}
+      onHandlerStateChange={({ nativeEvent }) => {
+        if (nativeEvent.state === State.ACTIVE) {
+          onSwipeLeft();
+        }
+      }}
+    >
+      <ScrollView contentContainerStyle={[styles.container]}>
+        <SafeAreaView style={[styles.container]}>
+          <ImageBackground
+            source={starsBackground}
+            style={styles.backgroundImage}
+          />
 
-        {user ? (
-          <>
-            <Text style={{ color: "white", fontSize: 40, marginTop: 20 }}>
-              Let's chat with{" "}
-            </Text>
-            {users.length > 1 ? (
-              users
-                .filter((u) => u.mail !== user.email)
-                .map((u) => (
-                  <ContactCard
-                    key={u.id}
-                    contact={u}
-                    navigation={navigation}
-                  ></ContactCard>
-                ))
-            ) : (
-              <Text style={{ marginTop: 40, color: "white" }}>
-                Loading available contacts...
+          {user ? (
+            <>
+              <Text style={{ color: "white", fontSize: 40, marginTop: 20 }}>
+                Let's chat with
               </Text>
-            )}
-          </>
-        ) : (
-          <>
-            {console.log("Hello")}
-            <LoginForm navigation={navigation} />
-          </>
-        )}
+              {users.length > 1 ? (
+                users
+                  .filter((u) => u.mail !== user.email)
+                  .map((u) => (
+                    <ContactCard
+                      key={u.id}
+                      contact={u}
+                      navigation={navigation}
+                    ></ContactCard>
+                  ))
+              ) : (
+                <Text style={{ marginTop: 40, color: "white" }}>
+                  Loading available contacts...
+                </Text>
+              )}
+            </>
+          ) : (
+            <>
+              {console.log("Hello")}
+              <LoginForm navigation={navigation} />
+            </>
+          )}
 
-        <StatusBar style="auto" />
-      </SafeAreaView>
-    </View>
+          <StatusBar style="auto" />
+        </SafeAreaView>
+      </ScrollView>
+    </FlingGestureHandler>
   );
 };
 
