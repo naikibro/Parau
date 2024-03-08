@@ -138,7 +138,7 @@ const LoginForm = ({ navigation }) => {
         <>
           {!isKeyboardVisible && (
             <Image
-              source={require("./../assets/PARAU.png")}
+              source={require("./../assets/PARAU-alpha.png")}
               style={{ width: 150, height: 150, borderRadius: 40 }}
             />
           )}
