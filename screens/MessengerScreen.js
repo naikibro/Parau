@@ -134,14 +134,13 @@ const MessengerScreen = ({ navigation }) => {
       <View style={{ flex: 1 }}>
         {contact ? (
           <>
-            {loading ? ( // Render skeleton when loading
+            {loading ? (
               <ScrollView style={{ flex: 1, marginTop: 20 }}>
                 {[...Array(getRandomInt(4, 12))].map((_, index) => {
                   const randomWidth = getRandomInt(40, 85);
-                  const fadeAnim = new Animated.Value(0); // Initial opacity value
-                  const delay = index * 200; // Delay each skeleton by 200ms
+                  const fadeAnim = new Animated.Value(0);
+                  const delay = index * 200;
 
-                  // Start the fade in animation after a delay
                   Animated.timing(fadeAnim, {
                     toValue: 1,
                     duration: 500,
@@ -171,9 +170,8 @@ const MessengerScreen = ({ navigation }) => {
                 {messages.map((message, index) => {
                   const fadeInAnim = new Animated.Value(0);
 
-                  // Start the fade in animation
                   Animated.timing(fadeInAnim, {
-                    toValue: 1, // Fade in to fully opaque
+                    toValue: 1,
                     duration: 500,
                     delay: index * 200,
                     useNativeDriver: true,

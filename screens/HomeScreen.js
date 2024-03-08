@@ -33,7 +33,7 @@ import useHeaderStore from "../store/HeaderStore";
 const HomeScreen = ({ navigation }) => {
   const [user, setUser] = useState(null);
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [loading, setLoading] = useState(true);
   const isChatting = useHeaderStore((state) => state.isChatting);
   const lastContact = useHeaderStore((state) => state.lastContact);
 
@@ -51,7 +51,7 @@ const HomeScreen = ({ navigation }) => {
         ...doc.data(),
       }));
       setUsers(userList);
-      setLoading(false); // Update loading state once contacts are loaded
+      setLoading(false);
     });
 
     return unsubscribe;

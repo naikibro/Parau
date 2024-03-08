@@ -5,15 +5,12 @@ import {
   TextInput,
   View,
   Alert,
-  StatusBar,
   Image,
   Pressable,
   Animated,
-  Button,
   Platform,
   Keyboard,
-  SafeAreaView,
-  ActivityIndicator, // Import ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 
 // Firebase imports
@@ -22,26 +19,22 @@ import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
   signOut,
-  createUserWithEmailAndPassword,
-  updateProfile,
 } from "firebase/auth";
 
 const LoginForm = ({ navigation }) => {
-  // State hooks for user input and user data
   const [mail, setMail] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
 
-  // Form validation state
   const [isFormValid, setIsFormValid] = useState(false);
-
-  // Input focus state
   const [isInputFocused, setIsInputFocused] = useState(false);
-
-  // Loading state
   const [isLoading, setIsLoading] = useState(false);
 
-  // Effect hook for form validation
+  const handleMailInput = (value) => setMail(value);
+  const handlePasswordInput = (value) => setPassword(value);
+  const inputFocusAnimatedValue = new Animated.Value(0);
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
   useEffect(() => {
     setIsFormValid(mail.trim() !== "" && password.trim() !== "");
   }, [mail, password]);
@@ -54,20 +47,12 @@ const LoginForm = ({ navigation }) => {
     return unsubscribe; // Cleanup on component unmount
   }, []);
 
-  // Event handlers for input fields
-  const handleMailInput = (value) => setMail(value);
-  const handlePasswordInput = (value) => setPassword(value);
-
-  const inputFocusAnimatedValue = new Animated.Value(0);
-
-  // Login user function
   const loginUser = async () => {
     if (!isFormValid) {
       Alert.alert("Error", "Please fill in all fields.");
       return;
     }
 
-    // Set loading state to true
     setIsLoading(true);
 
     try {
@@ -82,23 +67,20 @@ const LoginForm = ({ navigation }) => {
       Alert.alert("Login Error", error.message);
     }
 
-    // Reset loading state to false after login attempt
     setIsLoading(false);
   };
 
-  // Animated background color based on input focus
   const animatedBackgroundColor = inputFocusAnimatedValue.interpolate({
     inputRange: [0, 1],
-    outputRange: ["rgba(255, 255, 255, .9)", "rgba(255, 255, 255, 0.8)"], // Background color values
+    outputRange: ["rgba(255, 255, 255, .9)", "rgba(255, 255, 255, 0.8)"],
   });
 
-  // Focus and Blur handlers for inputs using Animated API
   const handleFocus = () => {
     setIsInputFocused(!isInputFocused);
     Animated.timing(inputFocusAnimatedValue, {
       toValue: 1,
       duration: 600,
-      useNativeDriver: false, // backgroundColor does not support native animation
+      useNativeDriver: false,
     }).start();
   };
 
@@ -108,11 +90,9 @@ const LoginForm = ({ navigation }) => {
     Animated.timing(inputFocusAnimatedValue, {
       toValue: 0,
       duration: 900,
-      useNativeDriver: false, // backgroundColor does not support native animation
+      useNativeDriver: false,
     }).start();
   };
-
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -137,9 +117,7 @@ const LoginForm = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {isLoading && ( // Render activity indicator if loading
-        <ActivityIndicator size="large" color="#0000ff" />
-      )}
+      {isLoading && <ActivityIndicator size="large" color="#0000ff" />}
 
       {user ? (
         <View>
@@ -157,7 +135,6 @@ const LoginForm = ({ navigation }) => {
           </Pressable>
         </View>
       ) : (
-        // Rest of your login form JSX
         <>
           {!isKeyboardVisible && (
             <Image
@@ -168,7 +145,7 @@ const LoginForm = ({ navigation }) => {
           <Animated.View
             style={[
               styles.loginForm,
-              { backgroundColor: animatedBackgroundColor }, // Apply animated background color here
+              { backgroundColor: animatedBackgroundColor },
             ]}
           >
             <Text
@@ -227,7 +204,6 @@ const LoginForm = ({ navigation }) => {
   );
 };
 
-// StyleSheet for styling the components
 const styles = StyleSheet.create({
   container: {
     flex: 1,
