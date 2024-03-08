@@ -138,12 +138,12 @@ const MessengerScreen = ({ navigation }) => {
               <ScrollView style={{ flex: 1, marginTop: 20 }}>
                 {[...Array(getRandomInt(4, 12))].map((_, index) => {
                   const randomWidth = getRandomInt(40, 85);
-                  const fadeAnim = new Animated.Value(1); // Initial opacity value
+                  const fadeAnim = new Animated.Value(0); // Initial opacity value
                   const delay = index * 200; // Delay each skeleton by 200ms
 
-                  // Start the fade out animation after a delay
+                  // Start the fade in animation after a delay
                   Animated.timing(fadeAnim, {
-                    toValue: 0,
+                    toValue: 1,
                     duration: 500,
                     delay: delay,
                     useNativeDriver: true,
