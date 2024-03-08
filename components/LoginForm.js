@@ -13,6 +13,7 @@ import {
   Platform,
   Keyboard,
   SafeAreaView,
+  ActivityIndicator, // Import ActivityIndicator
 } from "react-native";
 
 // Firebase imports
@@ -36,6 +37,9 @@ const LoginForm = ({ navigation }) => {
 
   // Input focus state
   const [isInputFocused, setIsInputFocused] = useState(false);
+
+  // Loading state
+  const [isLoading, setIsLoading] = useState(false);
 
   // Effect hook for form validation
   useEffect(() => {
@@ -62,6 +66,10 @@ const LoginForm = ({ navigation }) => {
       Alert.alert("Error", "Please fill in all fields.");
       return;
     }
+
+    // Set loading state to true
+    setIsLoading(true);
+
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
@@ -73,6 +81,9 @@ const LoginForm = ({ navigation }) => {
     } catch (error) {
       Alert.alert("Login Error", error.message);
     }
+
+    // Reset loading state to false after login attempt
+    setIsLoading(false);
   };
 
   // Animated background color based on input focus
@@ -126,6 +137,10 @@ const LoginForm = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      {isLoading && ( // Render activity indicator if loading
+        <ActivityIndicator size="large" color="#0000ff" />
+      )}
+
       {user ? (
         <View>
           <Text>Welcome {user.displayName || "User"}!</Text>
@@ -142,6 +157,7 @@ const LoginForm = ({ navigation }) => {
           </Pressable>
         </View>
       ) : (
+        // Rest of your login form JSX
         <>
           {!isKeyboardVisible && (
             <Image
@@ -207,8 +223,6 @@ const LoginForm = ({ navigation }) => {
           </Animated.View>
         </>
       )}
-      {/*       <Button title="debug" onPress={() => console.log("user => ", user)} />
-       */}
     </View>
   );
 };

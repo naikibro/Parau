@@ -92,9 +92,11 @@ const HomeScreen = ({ navigation }) => {
                 Let's chat with
               </Text>
               {loading ? (
-                Array.from({ length: Math.floor(Math.random() * (8 - 3 + 1) + 3) }).map((_, index) => (
+                Array.from({
+                  length: Math.floor(Math.random() * (8 - 3 + 1) + 3),
+                }).map((_, index) => (
                   <SkeletonContactCard key={index} maxWidth={70} />
-              ))
+                ))
               ) : users.length > 1 ? (
                 users
                   .filter((u) => u.mail !== user.email)
