@@ -8,13 +8,14 @@ import {
   Dimensions,
   SafeAreaView,
 } from "react-native";
-import { Avatar, Button } from "react-native-paper";
+import { Avatar } from "react-native-paper";
 
 // Import Gesture Handling
 import {
   FlingGestureHandler,
   Directions,
   State,
+  ScrollView,
 } from "react-native-gesture-handler";
 
 // Import firebase SDK
@@ -121,7 +122,7 @@ const HomeScreen = ({ navigation }) => {
         }
       }}
     >
-      <View style={[styles.container]}>
+      <ScrollView contentContainerStyle={[styles.container]}>
         <SafeAreaView style={[styles.container]}>
           <ImageBackground
             source={starsBackground}
@@ -158,7 +159,7 @@ const HomeScreen = ({ navigation }) => {
 
           <StatusBar style="auto" />
         </SafeAreaView>
-      </View>
+      </ScrollView>
     </FlingGestureHandler>
   );
 };

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
+import { Button } from "react-native-paper";
 import { View, ScrollView } from "react-native";
 
 // Import Gesture Handling
@@ -24,6 +25,9 @@ import { onAuthStateChanged } from "firebase/auth";
 import SentMessage from "../components/SentMessage";
 import ReceivedMessage from "../components/ReceivedMessage";
 import MessageInput from "../components/MessageInput";
+
+// Import icons
+import { Ionicons } from "@expo/vector-icons";
 
 // Import stores
 import useHeaderStore from "../store/HeaderStore";
@@ -85,6 +89,21 @@ const MessengerScreen = ({ navigation }) => {
   useLayoutEffect(() => {
     setPageName("Chat with " + contact.name);
     navigation.setOptions({ title: pageName });
+    navigation.setOptions({
+      title: pageName,
+      headerLeft: () => (
+        <Button
+          style={{
+            borderRadius: 20,
+            marginHorizontal: 10,
+          }}
+          mode="contained"
+          onPress={() => navigation.navigate("Home")}
+        >
+          <Ionicons name="home" size={22} color="white" />
+        </Button>
+      ),
+    });
   }, [contact, navigation, pageName]);
 
   const onSwipeRight = () => {
