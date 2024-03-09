@@ -20,6 +20,7 @@ import {
   onAuthStateChanged,
   signOut,
 } from "firebase/auth";
+import { Button } from "react-native-paper";
 
 const LoginForm = ({ navigation }) => {
   const [mail, setMail] = useState("");
@@ -177,18 +178,14 @@ const LoginForm = ({ navigation }) => {
               style={styles.input}
               autoCapitalize="none"
             />
-            <Pressable
+            <Button
               onPress={loginUser}
-              style={({ pressed }) => [
-                {
-                  backgroundColor: pressed ? "blue" : "navy",
-                },
-                styles.button,
-              ]}
+              mode="contained"
               disabled={!isFormValid}
+              style={{ marginVertical: 10 }}
             >
-              <Text style={styles.buttonText}>Login</Text>
-            </Pressable>
+              Login
+            </Button>
             <Pressable
               style={styles.link}
               onPress={() => navigation.navigate("Signup")}

@@ -21,19 +21,12 @@ import LogOutButton from "./components/utils/LogOutButton";
 import useAuthStore from "./store/AuthStore";
 import useHeaderStore from "./store/HeaderStore";
 
+// Theme
+import Theme from "./theme/Theme";
+
 const Tab = createBottomTabNavigator();
 
 export default function App() {
-  const theme = {
-    ...DefaultTheme,
-    roundness: 2,
-    colors: {
-      ...DefaultTheme.colors,
-      primary: "#3498db",
-      accent: "#f1c40f",
-    },
-  };
-
   const [user, setUser] = useState(null);
   const [users, setUsers] = useState([]);
   const isChatting = useHeaderStore((state) => state.isChatting);
@@ -62,7 +55,7 @@ export default function App() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <PaperProvider theme={theme}>
+      <PaperProvider theme={Theme}>
         <NavigationContainer>
           <Tab.Navigator
             screenOptions={({ route }) => ({
