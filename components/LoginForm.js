@@ -137,7 +137,7 @@ const LoginForm = ({ navigation }) => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} onLayout={onLayoutRootView}>
       {isLoading && <ActivityIndicator size="large" color="#0000ff" />}
 
       {user ? (

@@ -98,7 +98,10 @@ const HomeScreen = ({ navigation }) => {
         }
       }}
     >
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView
+        onLayout={onLayoutRootView}
+        contentContainerStyle={styles.container}
+      >
         <SafeAreaView style={styles.container}>
           {user ? (
             <>

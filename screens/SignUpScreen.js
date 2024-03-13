@@ -110,7 +110,7 @@ const SignUpScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} onLayout={onLayoutRootView}>
       <KeyboardAvoidingView style={styles.container}>
         <View style={styles.container}>
           <ImageBackground

@@ -31,11 +31,6 @@
         "projectId": "15af217a-2028-424e-a17c-fb1f96a89a95"
       }
     },
-    "plugins": [
-      "expo-font",
-      {
-        "fonts": ["./assets/fonts/Mitr-Bold.ttf"]
-      }
-    ]
+    "plugins": ["expo-font"]
   }
 }
