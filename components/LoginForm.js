@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -13,6 +13,10 @@ import {
   ActivityIndicator,
 } from "react-native";
 
+// Import assets
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+
 // Firebase imports
 import { auth } from "../firebase";
 import {
@@ -21,6 +25,8 @@ import {
   signOut,
 } from "firebase/auth";
 import { Button } from "react-native-paper";
+
+SplashScreen.preventAutoHideAsync();
 
 const LoginForm = ({ navigation }) => {
   const [mail, setMail] = useState("");
@@ -35,6 +41,16 @@ const LoginForm = ({ navigation }) => {
   const handlePasswordInput = (value) => setPassword(value);
   const inputFocusAnimatedValue = new Animated.Value(0);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+  const [fontsLoaded, fontError] = useFonts({
+    "Mitr-Bold": require("../assets/fonts/Mitr-Bold.ttf"),
+  });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded || fontError) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, fontError]);
 
   useEffect(() => {
     setIsFormValid(mail.trim() !== "" && password.trim() !== "");
@@ -116,6 +132,10 @@ const LoginForm = ({ navigation }) => {
     };
   }, []);
 
+  if (!fontsLoaded && !fontError) {
+    return null;
+  }
+
   return (
     <View style={styles.container}>
       {isLoading && <ActivityIndicator size="large" color="#0000ff" />}
@@ -151,13 +171,13 @@ const LoginForm = ({ navigation }) => {
           >
             <Text
               style={{
-                fontWeight: "bold",
+                fontFamily: "Mitr-Bold",
                 fontSize: 30,
                 textAlign: "center",
                 marginBottom: 15,
               }}
             >
-              Log in
+              LOGIN
             </Text>
             <TextInput
               value={mail}
