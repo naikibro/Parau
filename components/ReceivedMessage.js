@@ -28,11 +28,7 @@ const ReceivedMessage = ({ message }) => {
   };
 
   // Define the double tap gesture using RNGH
-  const doubleTapGesture = Gesture.Tap()
-    .numberOfTaps(2)
-    .onEnd(() => {
-      handleDoubleTap();
-    });
+  const doubleTapGesture = Gesture.Tap().numberOfTaps(2).onEnd(handleDoubleTap);
 
   return (
     <GestureDetector gesture={doubleTapGesture}>
