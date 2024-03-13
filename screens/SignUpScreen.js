@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -13,8 +13,6 @@ import {
   KeyboardAvoidingView,
   SafeAreaView,
 } from "react-native";
-
-// Firebase imports
 import { auth, db } from "../firebase";
 import {
   onAuthStateChanged,
@@ -22,107 +20,74 @@ import {
   createUserWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
-import { setDoc, addDoc, collection, doc } from "firebase/firestore";
+import { addDoc, collection } from "firebase/firestore";
+import { Button } from "react-native-paper";
 
 const SignUpScreen = ({ navigation }) => {
-  // State hooks for user input and user data
-  const [username, setUsername] = useState("");
-  const [userLastName, setUserLastName] = useState("");
-  const [mail, setMail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    username: "",
+    userLastName: "",
+    mail: "",
+    password: "",
+  });
   const [user, setUser] = useState(null);
-
-  // Form validation state
   const [isFormValid, setIsFormValid] = useState(false);
-
-  // Input focus state
   const [isInputFocused, setIsInputFocused] = useState(false);
-
-  // Animated background color based on input focus
   const inputFocusAnimatedValue = new Animated.Value(0);
 
-  // Effect hook for form validation
   useEffect(() => {
     setIsFormValid(
-      username.trim() !== "" && mail.trim() !== "" && password.trim() !== ""
+      formData.username.trim() &&
+        formData.mail.trim() &&
+        formData.password.trim()
     );
-  }, [username, mail, password]);
+  }, [formData]);
 
-  // Authentication state listener
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-    return unsubscribe; // Cleanup on component unmount
+    return onAuthStateChanged(auth, setUser);
   }, []);
 
-  // Event handlers for input fields
-  const handleMailInput = (value) => setMail(value);
-  const handleUsernameInput = (value) => setUsername(value);
-  const handleUserLastNameInput = (value) => setUserLastName(value);
-  const handlePasswordInput = (value) => setPassword(value);
+  const handleInputChange = (name, value) => {
+    setFormData({ ...formData, [name]: value });
+  };
 
-  // Create user function
-  const createUser = async () => {
+  const createUserAccount = async () => {
     if (!isFormValid) {
       Alert.alert("Error", "Please fill in all fields.");
       return;
     }
     try {
-      const userCredential = await createUserWithEmailAndPassword(
+      const { user } = await createUserWithEmailAndPassword(
         auth,
-        mail,
-        password
+        formData.mail,
+        formData.password
       );
-      setUser(userCredential.user);
-      console.log("User created", userCredential);
-      await updateProfile(userCredential.user, {
-        displayName: username,
+      await updateProfile(user, { displayName: formData.username });
+      await addDoc(collection(db, "users"), {
+        mail: formData.mail,
+        uid: user.uid,
+        name: formData.username,
+        lastName: formData.userLastName,
+        signUpMethod: "emailAndPassword",
+        createdAt: new Date(),
+        updatedAt: new Date(),
       });
-
-      try {
-        await addDoc(collection(db, "users"), {
-          mail: mail,
-          uid: userCredential.user.uid,
-          name: username,
-          lastName: userLastName,
-          signUpMethod: "emailAndPassword",
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        });
-      } catch (error) {
-        console.error("Error sending message: ", error);
-      }
-
-      console.log("Profile updated");
     } catch (error) {
       Alert.alert("Signup Error", error.message);
     }
   };
 
-  // Animated background color based on input focus
   const animatedBackgroundColor = inputFocusAnimatedValue.interpolate({
     inputRange: [0, 1],
-    outputRange: ["rgba(255, 255, 255, 1)", "rgba(255, 255, 255, 0.8)"], // Background color values
+    outputRange: ["rgba(255, 255, 255, 1)", "rgba(255, 255, 255, 0.8)"],
   });
 
-  // Focus and Blur handlers for inputs using Animated API
-  const handleFocus = () => {
-    setIsInputFocused(!isInputFocused);
+  const toggleInputFocus = (isFocused) => {
+    setIsInputFocused(isFocused);
     Animated.timing(inputFocusAnimatedValue, {
-      toValue: 1,
-      duration: 600,
-      useNativeDriver: false, // backgroundColor does not support native animation
-    }).start();
-  };
-
-  const handleBlur = () => {
-    setIsInputFocused(!isInputFocused);
-
-    Animated.timing(inputFocusAnimatedValue, {
-      toValue: 0,
-      duration: 900,
-      useNativeDriver: false, // backgroundColor does not support native animation
+      toValue: isFocused ? 1 : 0,
+      duration: isFocused ? 600 : 900,
+      useNativeDriver: false,
     }).start();
   };
 
@@ -131,103 +96,26 @@ const SignUpScreen = ({ navigation }) => {
       <KeyboardAvoidingView style={styles.container}>
         <View style={styles.container}>
           <ImageBackground
-            source={require("../assets/stars.jpg")}
+            source={require("../assets/bg-parau.png")}
             resizeMode="cover"
             style={styles.backgroundImage}
           />
           {user ? (
-            <View>
-              <Text>Welcome {user.displayName || "User"}!</Text>
-              <Pressable
-                onPress={() => signOut(auth).then(() => setUser(null))}
-                style={({ pressed }) => [
-                  {
-                    backgroundColor: pressed ? "blue" : "navy",
-                  },
-                  styles.button,
-                ]}
-              >
-                <Text style={styles.buttonText}>Log out</Text>
-              </Pressable>
-            </View>
+            <UserGreeting
+              user={user}
+              onSignOut={() => signOut(auth).then(() => setUser(null))}
+            />
           ) : (
-            <>
-              <Animated.View
-                style={[
-                  styles.loginForm,
-                  { backgroundColor: animatedBackgroundColor }, // Apply animated background color here
-                ]}
-              >
-                <Text
-                  style={{
-                    fontWeight: "bold",
-                    fontSize: 30,
-                    textAlign: "center",
-                    marginBottom: 15,
-                  }}
-                >
-                  Create an account
-                </Text>
-                <TextInput
-                  value={username}
-                  onChangeText={handleUsernameInput}
-                  onFocus={handleFocus}
-                  onBlur={handleBlur}
-                  placeholder="First name"
-                  style={styles.input}
-                />
-                <TextInput
-                  value={userLastName}
-                  onChangeText={handleUserLastNameInput}
-                  onFocus={handleFocus}
-                  onBlur={handleBlur}
-                  placeholder="Last name"
-                  style={(styles.input, { marginBottom: 10 })}
-                />
-                <TextInput
-                  value={mail}
-                  onChangeText={handleMailInput}
-                  onFocus={handleFocus}
-                  onBlur={handleBlur}
-                  placeholder="Email"
-                  style={styles.input}
-                  autoCapitalize="none"
-                  autoComplete="email"
-                />
-                <TextInput
-                  value={password}
-                  onChangeText={handlePasswordInput}
-                  onFocus={handleFocus}
-                  onBlur={handleBlur}
-                  placeholder="Password"
-                  secureTextEntry
-                  style={styles.input}
-                  autoCapitalize="none"
-                />
-                <Pressable
-                  onPress={createUser}
-                  style={({ pressed }) => [
-                    {
-                      backgroundColor: pressed ? "blue" : "navy",
-                    },
-                    styles.button,
-                  ]}
-                  disabled={!isFormValid}
-                >
-                  <Text style={styles.buttonText}>Sign up</Text>
-                </Pressable>
-                <Pressable
-                  style={styles.link}
-                  onPress={() => navigation.navigate("Home")}
-                >
-                  <Text style={styles.linkText}>
-                    Already have an account ? Log in here
-                  </Text>
-                </Pressable>
-              </Animated.View>
-            </>
+            <SignUpForm
+              formData={formData}
+              onInputChange={handleInputChange}
+              onSubmit={createUserAccount}
+              animatedBackgroundColor={animatedBackgroundColor}
+              toggleInputFocus={toggleInputFocus}
+              sInputFocused={isInputFocused}
+              navigation={navigation}
+            />
           )}
-
           <StatusBar style="auto" />
         </View>
       </KeyboardAvoidingView>
@@ -235,7 +123,59 @@ const SignUpScreen = ({ navigation }) => {
   );
 };
 
-// StyleSheet for styling the components
+const UserGreeting = ({ user, onSignOut }) => (
+  <View>
+    <Text>Welcome {user.displayName || "User"}!</Text>
+    <Pressable
+      onPress={onSignOut}
+      style={({ pressed }) => [
+        styles.button,
+        { backgroundColor: pressed ? "blue" : "navy" },
+      ]}
+    >
+      <Text style={styles.buttonText}>Log out</Text>
+    </Pressable>
+  </View>
+);
+
+const SignUpForm = ({
+  formData,
+  onInputChange,
+  onSubmit,
+  animatedBackgroundColor,
+  toggleInputFocus,
+  isInputFocused,
+  navigation,
+}) => (
+  <Animated.View
+    style={[styles.loginForm, { backgroundColor: animatedBackgroundColor }]}
+  >
+    <Text style={styles.title}>Create an account</Text>
+    {["username", "last name", "mail", "password"].map((field) => (
+      <TextInput
+        key={field}
+        value={formData[field]}
+        onChangeText={(value) => onInputChange(field, value)}
+        onFocus={() => toggleInputFocus(true)}
+        onBlur={() => toggleInputFocus(false)}
+        placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+        style={[
+          styles.input,
+          isInputFocused && field === "password" && styles.inputFocused,
+        ]}
+        secureTextEntry={field === "password"}
+        autoCapitalize="none"
+      />
+    ))}
+    <Button onPress={onSubmit} mode="contained" style={{ marginVertical: 10 }}>
+      Sign up
+    </Button>
+    <Pressable onPress={() => navigation.navigate("Home")}>
+      <Text style={styles.linkText}>Already have an account? Log in here</Text>
+    </Pressable>
+  </Animated.View>
+);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -249,14 +189,13 @@ const styles = StyleSheet.create({
     padding: 30,
     borderRadius: 15,
     backgroundColor: "rgba(0, 0, 0, 0.2)",
-    color: "white",
   },
   input: {
     color: "black",
     borderBottomWidth: 1,
     borderBottomColor: "black",
-    padding: 2,
-    marginVertical: 1,
+    padding: 10,
+    marginVertical: 5,
   },
   button: {
     alignItems: "center",
@@ -265,7 +204,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     borderRadius: 4,
     elevation: 3,
-    backgroundColor: "navy",
     marginVertical: 10,
   },
   buttonText: {
@@ -275,18 +213,19 @@ const styles = StyleSheet.create({
     color: "#000",
     textAlign: "center",
   },
+  title: {
+    fontWeight: "bold",
+    fontSize: 30,
+    textAlign: "center",
+    marginBottom: 15,
+  },
   backgroundImage: {
     flex: 1,
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
-    height: "100%",
     justifyContent: "flex-end",
     alignItems: "center",
     position: "absolute",
-    bottom: 0,
-    right: 0,
-    left: 0,
-    top: 0,
   },
 });
 

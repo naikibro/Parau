@@ -20,6 +20,7 @@ import {
   onAuthStateChanged,
   signOut,
 } from "firebase/auth";
+import { Button } from "react-native-paper";
 
 const LoginForm = ({ navigation }) => {
   const [mail, setMail] = useState("");
@@ -72,7 +73,7 @@ const LoginForm = ({ navigation }) => {
 
   const animatedBackgroundColor = inputFocusAnimatedValue.interpolate({
     inputRange: [0, 1],
-    outputRange: ["rgba(255, 255, 255, .9)", "rgba(255, 255, 255, 0.8)"],
+    outputRange: ["rgba(255, 255, 255, 1)", "rgba(255, 255, 255, 0.9)"],
   });
 
   const handleFocus = () => {
@@ -138,7 +139,7 @@ const LoginForm = ({ navigation }) => {
         <>
           {!isKeyboardVisible && (
             <Image
-              source={require("./../assets/logo.png")}
+              source={require("./../assets/PARAU-alpha.png")}
               style={{ width: 150, height: 150, borderRadius: 40 }}
             />
           )}
@@ -177,18 +178,14 @@ const LoginForm = ({ navigation }) => {
               style={styles.input}
               autoCapitalize="none"
             />
-            <Pressable
+            <Button
               onPress={loginUser}
-              style={({ pressed }) => [
-                {
-                  backgroundColor: pressed ? "blue" : "navy",
-                },
-                styles.button,
-              ]}
+              mode="contained"
               disabled={!isFormValid}
+              style={{ marginVertical: 10 }}
             >
-              <Text style={styles.buttonText}>Login</Text>
-            </Pressable>
+              Login
+            </Button>
             <Pressable
               style={styles.link}
               onPress={() => navigation.navigate("Signup")}
@@ -223,7 +220,7 @@ const styles = StyleSheet.create({
     marginVertical: 40,
     padding: 30,
     borderRadius: 15,
-    backgroundColor: "rgba(0, 0, 0, 0.2)",
+    backgroundColor: "rgba(0, 0, 0, 1)",
     color: "white",
   },
   loginFormFocused: {

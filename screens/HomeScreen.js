@@ -25,7 +25,7 @@ import ContactCard from "../components/ContactCard";
 import SkeletonContactCard from "../components/skeletons/SkeletonContactCard";
 
 // Import assets
-import starsBackground from "../assets/stars.jpg";
+import background from "../assets/bg-orange.png";
 
 // Import stores
 import useHeaderStore from "../store/HeaderStore";
@@ -82,10 +82,6 @@ const HomeScreen = ({ navigation }) => {
     >
       <ScrollView contentContainerStyle={styles.container}>
         <SafeAreaView style={styles.container}>
-          <ImageBackground
-            source={starsBackground}
-            style={styles.backgroundImage}
-          />
           {user ? (
             <>
               <Text style={{ color: "white", fontSize: 40, marginTop: 20 }}>
@@ -115,6 +111,11 @@ const HomeScreen = ({ navigation }) => {
             </>
           ) : (
             <>
+              <ImageBackground
+                source={background}
+                style={styles.backgroundImage}
+              />
+
               <LoginForm navigation={navigation} />
             </>
           )}

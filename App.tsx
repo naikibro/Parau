@@ -2,7 +2,7 @@
 import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 import React, { useState, useEffect, StrictMode } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, DarkTheme } from "@react-navigation/native";
 import { auth, db } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { collection, onSnapshot } from "firebase/firestore";
@@ -21,19 +21,12 @@ import LogOutButton from "./components/utils/LogOutButton";
 import useAuthStore from "./store/AuthStore";
 import useHeaderStore from "./store/HeaderStore";
 
+// Theme
+import Theme from "./theme/Theme";
+
 const Tab = createBottomTabNavigator();
 
 export default function App() {
-  const theme = {
-    ...DefaultTheme,
-    roundness: 2,
-    colors: {
-      ...DefaultTheme.colors,
-      primary: "#3498db",
-      accent: "#f1c40f",
-    },
-  };
-
   const [user, setUser] = useState(null);
   const [users, setUsers] = useState([]);
   const isChatting = useHeaderStore((state) => state.isChatting);
@@ -62,8 +55,8 @@ export default function App() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <PaperProvider theme={theme}>
-        <NavigationContainer>
+      <PaperProvider theme={Theme}>
+        <NavigationContainer theme={DarkTheme}>
           <Tab.Navigator
             screenOptions={({ route }) => ({
               tabBarIcon: ({ focused, color, size }) => {
