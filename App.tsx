@@ -2,7 +2,7 @@
 import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 import React, { useState, useEffect, StrictMode } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, DarkTheme } from "@react-navigation/native";
 import { auth, db } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { collection, onSnapshot } from "firebase/firestore";
@@ -56,7 +56,7 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <PaperProvider theme={Theme}>
-        <NavigationContainer>
+        <NavigationContainer theme={DarkTheme}>
           <Tab.Navigator
             screenOptions={({ route }) => ({
               tabBarIcon: ({ focused, color, size }) => {

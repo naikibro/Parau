@@ -82,7 +82,6 @@ const HomeScreen = ({ navigation }) => {
     >
       <ScrollView contentContainerStyle={styles.container}>
         <SafeAreaView style={styles.container}>
-          <ImageBackground source={background} style={styles.backgroundImage} />
           {user ? (
             <>
               <Text style={{ color: "white", fontSize: 40, marginTop: 20 }}>
@@ -112,6 +111,11 @@ const HomeScreen = ({ navigation }) => {
             </>
           ) : (
             <>
+              <ImageBackground
+                source={background}
+                style={styles.backgroundImage}
+              />
+
               <LoginForm navigation={navigation} />
             </>
           )}
