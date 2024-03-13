@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   ScrollView,
   SafeAreaView,
@@ -26,9 +26,13 @@ import SkeletonContactCard from "../components/skeletons/SkeletonContactCard";
 
 // Import assets
 import background from "../assets/bg-orange.png";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
 
 // Import stores
 import useHeaderStore from "../store/HeaderStore";
+
+SplashScreen.preventAutoHideAsync();
 
 const HomeScreen = ({ navigation }) => {
   const [user, setUser] = useState(null);
@@ -36,6 +40,16 @@ const HomeScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const isChatting = useHeaderStore((state) => state.isChatting);
   const lastContact = useHeaderStore((state) => state.lastContact);
+
+  const [fontsLoaded, fontError] = useFonts({
+    "Mitr-Bold": require("../assets/fonts/Mitr-Bold.ttf"),
+  });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded || fontError) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, fontError]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -71,6 +85,10 @@ const HomeScreen = ({ navigation }) => {
     }
   };
 
+  if (!fontsLoaded && !fontError) {
+    return null;
+  }
+
   return (
     <FlingGestureHandler
       direction={Directions.LEFT}
@@ -84,7 +102,14 @@ const HomeScreen = ({ navigation }) => {
         <SafeAreaView style={styles.container}>
           {user ? (
             <>
-              <Text style={{ color: "white", fontSize: 40, marginTop: 20 }}>
+              <Text
+                style={{
+                  color: "white",
+                  fontFamily: "Mitr-Bold",
+                  fontSize: 40,
+                  marginTop: 20,
+                }}
+              >
                 Let's chat with
               </Text>
               {loading ? (

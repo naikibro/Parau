@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -13,6 +13,12 @@ import {
   KeyboardAvoidingView,
   SafeAreaView,
 } from "react-native";
+
+// import assets
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+
+// Import firestore SDK
 import { auth, db } from "../firebase";
 import {
   onAuthStateChanged,
@@ -22,6 +28,8 @@ import {
 } from "firebase/auth";
 import { addDoc, collection } from "firebase/firestore";
 import { Button } from "react-native-paper";
+
+SplashScreen.preventAutoHideAsync();
 
 const SignUpScreen = ({ navigation }) => {
   const [formData, setFormData] = useState({
@@ -34,6 +42,16 @@ const SignUpScreen = ({ navigation }) => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [isInputFocused, setIsInputFocused] = useState(false);
   const inputFocusAnimatedValue = new Animated.Value(0);
+
+  const [fontsLoaded, fontError] = useFonts({
+    "Mitr-Bold": require("../assets/fonts/Mitr-Bold.ttf"),
+  });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded || fontError) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, fontError]);
 
   useEffect(() => {
     setIsFormValid(
@@ -214,7 +232,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   title: {
-    fontWeight: "bold",
+    fontFamily: "Mitr-Bold",
     fontSize: 30,
     textAlign: "center",
     marginBottom: 15,
