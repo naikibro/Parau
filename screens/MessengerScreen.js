@@ -57,7 +57,7 @@ const MessengerScreen = ({ navigation }) => {
 
   useEffect(() => {
     setMessages([]);
-    setLoading(true); // Set loading state when fetching data
+    setLoading(true);
     let unsubscribe = () => {};
 
     // Fetch all the messages between Me and contact
@@ -168,26 +168,14 @@ const MessengerScreen = ({ navigation }) => {
             ) : (
               <ScrollView style={{ flex: 1, marginTop: 20 }}>
                 {messages.map((message, index) => {
-                  const fadeInAnim = new Animated.Value(0);
-
-                  Animated.timing(fadeInAnim, {
-                    toValue: 1,
-                    duration: 500,
-                    delay: index * 200,
-                    useNativeDriver: true,
-                  }).start();
-
                   return (
-                    <Animated.View
-                      key={message.id}
-                      style={{ opacity: fadeInAnim }}
-                    >
+                    <View key={message.id}>
                       {message.sender === user?.uid ? (
                         <SentMessage key={message.id} message={message} />
                       ) : (
                         <ReceivedMessage key={message.id} message={message} />
                       )}
-                    </Animated.View>
+                    </View>
                   );
                 })}
               </ScrollView>

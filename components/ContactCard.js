@@ -10,7 +10,7 @@ const ContactCard = ({ navigation, contact }) => {
   const setLastContact = useHeaderStore((state) => state.setLastContact);
   const lastContact = useHeaderStore((state) => state.lastContact);
   const theme = useTheme();
-  console.log("theme: ", theme);
+
   const handlePress = async () => {
     setLastContact(contact);
     await activateChat();
