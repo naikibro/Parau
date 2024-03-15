@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Tarena",
+    "name": "Parau",
     "slug": "parau",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -11,19 +11,17 @@
       "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.naikibro.Tarena"
+      "bundleIdentifier": "com.naikibro.Parau"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/PARAU.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.naikibro.Tarena"
+      "package": "com.naikibro.Parau"
     },
     "web": {
       "favicon": "./assets/favicon.ico"
@@ -33,9 +31,7 @@
         "projectId": "cbfae7b2-62c8-4bd3-ba98-0ee139a99aba"
       }
     },
-    "plugins": [
-      "expo-font"
-    ],
+    "plugins": ["expo-font"],
     "owner": "naikibro"
   }
 }

@@ -39,6 +39,27 @@ npx expo start
 
 (Additional steps for running on iOS or Android emulators/devices)
 
+3. Build the application
+
+requirements for local build:
+
+- Java 17
+- global env var for JDK path
+- global env var for NDK path
+- healthy expo and npm packages
+
+Locally
+
+```sh
+eas build -p android --profile preview --local
+```
+
+With EAS
+
+```sh
+eas build -p android --profile preview
+```
+
 ## Usage
 
 You must create an account and log into the application to enjoy the full experience
